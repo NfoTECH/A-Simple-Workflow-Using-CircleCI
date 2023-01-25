@@ -34,7 +34,7 @@ workflows:
     jobs:
       - welcome/run
       - print-hello
-      - print-world
-        requires:
-          - print-hello
+      - print-world: 
+          requires:
+            - print-hello
 
