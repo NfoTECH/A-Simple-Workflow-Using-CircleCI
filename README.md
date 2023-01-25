@@ -1,1 +1,1 @@
-### A siple workflow with Circle CI
+### A simple workflow with Circle CI
