@@ -54,44 +54,44 @@ orbs:
 
 #-------------------------------------------DRY using COMMANDS
 
-# commands:
-#   print_pipeline_id:
-#     parameters:
-#       id:
-#         type: string
-#     steps:
-#       - run: echo "<< parameters.id >>"
-
-# jobs:
-#   my_job:
-#     docker:
-#       - image: circleci/node:13.8.0
-#     steps:
-#       - print_pipeline_id:
-#           id: << pipeline.id >>
-
-# workflows:
-#   my_workflow:
-#     jobs:
-#       - my_job
-
-#-------------------------------------------Deliberate Failure
+commands:
+  print_pipeline_id:
+    parameters:
+      id:
+        type: string
+    steps:
+      - run: echo "<< parameters.id >>"
 
 jobs:
   my_job:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: exit 1
-      - run:
-          name: "This step will not run"
-          command: echo "Told ya it would fail"
-          when: on_fail
+      - print_pipeline_id:
+          id: << pipeline.id >>
 
 workflows:
   my_workflow:
     jobs:
       - my_job
+
+#-------------------------------------------Deliberate Failure
+
+# jobs:
+#   my_job:
+#     docker:
+#       - image: circleci/node:13.8.0
+#     steps:
+#       - run: exit 1
+#       - run:
+#           name: "This step will not run"
+#           command: echo "Told ya it would fail"
+#           when: on_fail
+
+# workflows:
+#   my_workflow:
+#     jobs:
+#       - my_job
 
 
 
