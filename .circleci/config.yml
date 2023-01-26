@@ -23,30 +23,57 @@ orbs:
 #           requires:
 #             - print-hello
 
+#---------------------------------------------SAVE TO A TXT FILE
+
+# jobs:
+#   save_hello_world_output:
+#     docker:
+#       - image: circleci/node:13.8.0
+#     steps:
+#       - run: echo "hello world" > output.txt # ~/output.txt
+#       - persist_to_workspace:
+#           root: .  # ~/
+#           paths:
+#             - output.txt
+
+#   print_hello_world_output:
+#     docker:
+#       - image: circleci/node:13.8.0
+#     steps:
+#       - attach_workspace:
+#           at: .  # ~/
+#       - run: cat output.txt  # ~/output.txt
+
+# workflows:
+#   build_and_test:
+#     jobs:
+#       - save_hello_world_output
+#       - print_hello_world_output:
+#           requires:
+#             - save_hello_world_output
+
+#---------------------------------------------------------DRY
+
+commands:
+  print_pipeline_id:
+    parameters:
+      id:
+        type: string
+    steps:
+      - run: echo "<< parameters.id >>"
+
 jobs:
-  save_hello_world_output:
+  my_job:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: echo "hello world" > output.txt
-      - persist_to_workspace:
-          root: .
-          paths:
-            - output.txt
-            
-  print_hello_world_output:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - attach_workspace:
-          at: .
-      - run: cat output.txt
+      - print_pipeline_id:
+          id: << pipeline.id >>
 
 workflows:
-  build_and_test:
+  my_workflow:
     jobs:
-      - save_hello_world_output
-      - print_hello_world_output:
-          requires:
-            - save_hello_world_output
+      - my_job
+
+
 
