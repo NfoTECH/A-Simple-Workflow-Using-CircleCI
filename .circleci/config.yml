@@ -54,26 +54,26 @@ orbs:
 
 #-------------------------------------------DRY using COMMANDS
 
-commands:
-  print_pipeline_id:
-    parameters:
-      id:
-        type: string
-    steps:
-      - run: echo "<< parameters.id >>"
+# commands:
+#   print_pipeline_id:
+#     parameters:
+#       id:
+#         type: string
+#     steps:
+#       - run: echo "<< parameters.id >>"
 
-jobs:
-  my_job:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - print_pipeline_id:
-          id: << pipeline.id >>
+# jobs:
+#   my_job:
+#     docker:
+#       - image: circleci/node:13.8.0
+#     steps:
+#       - print_pipeline_id:
+#           id: << pipeline.id >>
 
-workflows:
-  my_workflow:
-    jobs:
-      - my_job
+# workflows:
+#   my_workflow:
+#     jobs:
+#       - my_job
 
 #-------------------------------------------Deliberate Failure
 
@@ -93,6 +93,26 @@ workflows:
 #     jobs:
 #       - my_job
 
+#-----------------------------------------CREATE_INFRASTRUCTURE
+
+jobs:
+  create_infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Create Cloudformation Stack
+          command: |
+            aws cloudformation deploy \
+              --template-file template.yml \
+              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+              --region us-east-1
+
+workflows:
+  my_workflow:
+    jobs:
+      - create_infrastructure
 
 
 
